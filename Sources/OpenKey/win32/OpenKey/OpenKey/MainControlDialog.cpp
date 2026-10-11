@@ -374,11 +374,40 @@ void MainControlDialog::fillData() {
     EnableWindow(checkAllowZWJF, vCheckSpelling);
     EnableWindow(checkTempOffSpelling, vCheckSpelling);
     EnableWindow(checkFixChromium, vFixRecommendBrowser);
+    updateLanguageDependentUI();
 
     //tab info
     wchar_t buffer[256];
     wsprintfW(buffer, _T("Phiên bản %s cho Windows - Ngày cập nhật: %s"), OpenKeyHelper::getVersionString().c_str(), _T(__DATE__));
     SendDlgItemMessage(hTabPage4, IDC_STATIC_APP_VERSION_INFO, WM_SETTEXT, 0, LPARAM(buffer));
+}
+
+void MainControlDialog::updateLanguageDependentUI() {
+    bool isVietnamese = (vLanguage == 1);
+    bool isEnglish = (vLanguage == 0);
+
+    //Vietnamese-only options
+    EnableWindow(comboBoxInputType, isVietnamese);
+    EnableWindow(comboBoxTableCode, isVietnamese);
+    EnableWindow(checkModernOrthorgraphy, isVietnamese);
+    EnableWindow(checkSpelling, isVietnamese);
+    EnableWindow(checkRestoreIfWrongSpelling, isVietnamese && vCheckSpelling);
+    EnableWindow(checkAllowZWJF, isVietnamese && vCheckSpelling);
+    EnableWindow(checkTempOffSpelling, isVietnamese && vCheckSpelling);
+    EnableWindow(checkCapsFirstChar, isVietnamese);
+    EnableWindow(checkRememberTableCode, isVietnamese);
+    EnableWindow(checkAllowOtherLanguages, isVietnamese);
+    EnableWindow(checkTempOffOpenKey, isVietnamese);
+    EnableWindow(checkQuickTelex, isVietnamese);
+    EnableWindow(checkQuickStartConsonant, isVietnamese);
+    EnableWindow(checkQuickEndConsonant, isVietnamese);
+
+    //text replacement options (used by Vietnamese and German mode)
+    EnableWindow(checkFixRecommendBrowser, !isEnglish);
+    EnableWindow(checkFixChromium, !isEnglish && vFixRecommendBrowser);
+
+    //English-only options
+    EnableWindow(checkUseMacroInEnglish, isEnglish);
 }
 
 void MainControlDialog::setSwitchKey(const unsigned short& code) {
@@ -443,6 +472,7 @@ void MainControlDialog::onCheckboxClicked(const HWND& hWnd) {
                 setAppInputMethodStatus(OpenKeyHelper::getFrontMostAppExecuteName(), vLanguage | (vCodeTable << 2));
                 saveSmartSwitchKeyData();
             }
+            updateLanguageDependentUI();
         }
     }
     else if (hWnd == checkEnglish) {
@@ -453,6 +483,7 @@ void MainControlDialog::onCheckboxClicked(const HWND& hWnd) {
                 setAppInputMethodStatus(OpenKeyHelper::getFrontMostAppExecuteName(), vLanguage | (vCodeTable << 2));
                 saveSmartSwitchKeyData();
             }
+            updateLanguageDependentUI();
         }
     }
     else if (hWnd == checkGerman) {
@@ -463,6 +494,7 @@ void MainControlDialog::onCheckboxClicked(const HWND& hWnd) {
                 setAppInputMethodStatus(OpenKeyHelper::getFrontMostAppExecuteName(), vLanguage | (vCodeTable << 2));
                 saveSmartSwitchKeyData();
             }
+            updateLanguageDependentUI();
         }
     }
     else if (hWnd == checkModernOrthorgraphy) {
@@ -472,7 +504,7 @@ void MainControlDialog::onCheckboxClicked(const HWND& hWnd) {
     else if (hWnd == checkFixRecommendBrowser) {
         val = (int)SendMessage(hWnd, BM_GETCHECK, 0, 0);
         APP_SET_DATA(vFixRecommendBrowser, val ? 1 : 0);
-        EnableWindow(checkFixChromium, vFixRecommendBrowser);
+        updateLanguageDependentUI();
     }
     else if (hWnd == checkShowOnStartup) {
         val = (int)SendMessage(hWnd, BM_GETCHECK, 0, 0);
@@ -487,9 +519,7 @@ void MainControlDialog::onCheckboxClicked(const HWND& hWnd) {
         val = (int)SendMessage(hWnd, BM_GETCHECK, 0, 0);
         APP_SET_DATA(vCheckSpelling, val ? 1 : 0);
         vSetCheckSpelling();
-        EnableWindow(checkRestoreIfWrongSpelling, vCheckSpelling);
-        EnableWindow(checkAllowZWJF, vCheckSpelling);
-        EnableWindow(checkTempOffSpelling, vCheckSpelling);
+        updateLanguageDependentUI();
     }
     else if (hWnd == checkRestoreIfWrongSpelling) {
         val = (int)SendMessage(hWnd, BM_GETCHECK, 0, 0);

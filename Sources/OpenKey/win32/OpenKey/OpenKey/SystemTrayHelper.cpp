@@ -300,6 +300,18 @@ void SystemTrayHelper::updateData() {
 	MODIFY_MENU(otherCode, POPUP_UNICODE_COMPOUND, vCodeTable == 3);
 	MODIFY_MENU(otherCode, POPUP_VN_LOCALE_1258, vCodeTable == 4);
 
+	//grey out Vietnamese-only commands when not in Vietnamese mode
+	UINT vnState = (vLanguage == 1) ? MF_ENABLED : MF_GRAYED;
+	EnableMenuItem(popupMenu, POPUP_SPELLING, MF_BYCOMMAND | vnState);
+	EnableMenuItem(popupMenu, POPUP_TELEX, MF_BYCOMMAND | vnState);
+	EnableMenuItem(popupMenu, POPUP_VNI, MF_BYCOMMAND | vnState);
+	EnableMenuItem(popupMenu, POPUP_SIMPLE_TELEX, MF_BYCOMMAND | vnState);
+	EnableMenuItem(popupMenu, POPUP_UNICODE, MF_BYCOMMAND | vnState);
+	EnableMenuItem(popupMenu, POPUP_TCVN3, MF_BYCOMMAND | vnState);
+	EnableMenuItem(popupMenu, POPUP_VNI_WINDOWS, MF_BYCOMMAND | vnState);
+	EnableMenuItem(otherCode, POPUP_UNICODE_COMPOUND, MF_BYCOMMAND | vnState);
+	EnableMenuItem(otherCode, POPUP_VN_LOCALE_1258, MF_BYCOMMAND | vnState);
+
 	wstring hotkey = L"";
 	bool hasAdd = false;
 	if (convertToolHotKey & 0x100) {
