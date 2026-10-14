@@ -52,6 +52,9 @@ int vCheckNewVersion = 0;
 //beta feature
 int vFixChromiumBrowser = 0; //new on version 2.0
 
+//application UI language: 0 Vietnamese, 1 English, 2 German
+int vAppLanguage = 0;
+
 bool AppDelegate::isDialogMsg(MSG & msg) const {
 	return (mainDialog != NULL && IsDialogMessage(mainDialog->getHwnd(), &msg)) ||
 		(macroDialog != NULL && IsDialogMessage(macroDialog->getHwnd(), &msg)) || 
@@ -64,7 +67,7 @@ void AppDelegate::checkUpdate() {
 	if (OpenKeyManager::checkUpdate(newVersion)) {
 		WCHAR msg[256];
 		wsprintf(msg,
-			TEXT("OpenKey Có phiên bản mới (%s), bạn có muốn cập nhật không?"),
+			locTr(TEXT("OpenKey Có phiên bản mới (%s), bạn có muốn cập nhật không?")),
 			utf8ToWideString(newVersion).c_str());
 
 		int msgboxID = MessageBox(
@@ -204,6 +207,24 @@ void AppDelegate::onDefaultConfig() {
 	SystemTrayHelper::updateData();
 }
 
+void AppDelegate::onAppLanguageChanged() {
+	SystemTrayHelper::rebuildMenu();
+	if (aboutDialog) {
+		locApplyToWindow(aboutDialog->getHwnd());
+	}
+	if (macroDialog) {
+		locApplyToWindow(macroDialog->getHwnd());
+	}
+	if (convertDialog) {
+		locApplyToWindow(convertDialog->getHwnd());
+	}
+	if (mainDialog) {
+		mainDialog->fillData();
+		locApplyToWindow(mainDialog->getHwnd());
+	}
+	SystemTrayHelper::updateData();
+}
+
 void AppDelegate::onToggleVietnamese() {
 	APP_SET_DATA(vLanguage, vLanguage == 0 ? 1 : (vLanguage == 1 ? 2 : 0));
 	if (mainDialog) {
@@ -256,6 +277,7 @@ void AppDelegate::onMacroTable() {
 	if (macroDialog == NULL) {
 		macroDialog = new MacroDialog(hInstance, IDD_DIALOG_MACRO);
 		macroDialog->show();
+		locApplyToWindow(macroDialog->getHwnd());
 	} else {
 		macroDialog->bringOnTop();
 	}
@@ -265,6 +287,7 @@ void AppDelegate::onConvertTool() {
 	if (convertDialog == NULL) {
 		convertDialog = new ConvertToolDialog(hInstance, IDD_DIALOG_CONVERT_TOOL);
 		convertDialog->show();
+		locApplyToWindow(convertDialog->getHwnd());
 	} else {
 		convertDialog->bringOnTop();
 	}
@@ -276,7 +299,7 @@ void AppDelegate::onQuickConvert() {
 		if (!convertToolDontAlertWhenCompleted) {
 			TCHAR msg[256];
 			LoadString(hInstance, IDS_STRING_CONVERT_COMPLETED, msg, 256);
-			MessageBox(NULL, msg, _T("OpenKey"), MB_OK);
+			MessageBox(NULL, locTr(msg), _T("OpenKey"), MB_OK);
 		}
 	}
 }
@@ -307,6 +330,7 @@ void AppDelegate::onOpenKeyAbout() {
 	if (aboutDialog == NULL) {
 		aboutDialog = new AboutDialog(hInstance, IDD_ABOUTBOX);
 		aboutDialog->show();
+		locApplyToWindow(aboutDialog->getHwnd());
 	} else {
 		aboutDialog->bringOnTop();
 	}

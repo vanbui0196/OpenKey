@@ -187,6 +187,7 @@
 #define IDS_TRAY_TITLE_3                1071
 #define IDI_ICON_STATUS_GER             153
 #define IDI_ICON_STATUS_GER_10          154
+#define IDC_COMBO_APP_LANGUAGE          1073
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -196,7 +197,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        157
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1072
+#define _APS_NEXT_CONTROL_VALUE         1074
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

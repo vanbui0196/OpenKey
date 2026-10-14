@@ -40,6 +40,8 @@ redistribute your new version, it MUST be open source.
 
 #include "resource.h"
 
+#include "Localization.h"
+
 #include "../../../engine/Engine.h"
 
 #include "OpenKeyManager.h"

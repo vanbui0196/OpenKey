@@ -36,7 +36,7 @@ void MainControlDialog::initDialog() {
     TCHAR title[256];
     TCHAR titleBuffer[256];
     LoadString(hIns, IDS_MAIN_DIALOG_TITLE, title, 256);
-    wsprintfW(titleBuffer, title, OpenKeyHelper::getVersionString().c_str());
+    wsprintfW(titleBuffer, locTr(title), OpenKeyHelper::getVersionString().c_str());
     SetWindowText(hDlg, titleBuffer);
 
     //input type
@@ -59,13 +59,13 @@ void MainControlDialog::initDialog() {
     hTab = GetDlgItem(hDlg, IDC_TAB_CONTROL);
     TCITEM tci = { 0 };
     tci.mask = TCIF_TEXT;
-    tci.pszText = (LPWSTR)_T("Bộ gõ");
+    tci.pszText = (LPWSTR)locTr(_T("Bộ gõ"));
     TabCtrl_InsertItem(hTab, 0, &tci);
-    tci.pszText = (LPWSTR)_T("Gõ tắt");
+    tci.pszText = (LPWSTR)locTr(_T("Gõ tắt"));
     TabCtrl_InsertItem(hTab, 1, &tci);
-    tci.pszText = (LPWSTR)_T("Hệ thống");
+    tci.pszText = (LPWSTR)locTr(_T("Hệ thống"));
     TabCtrl_InsertItem(hTab, 2, &tci);
-    tci.pszText = (LPWSTR)_T("Thông tin");
+    tci.pszText = (LPWSTR)locTr(_T("Thông tin"));
     TabCtrl_InsertItem(hTab, 3, &tci);
     RECT r;
     TabCtrl_GetItemRect(hTab, 0, &r);
@@ -201,12 +201,20 @@ void MainControlDialog::initDialog() {
     checkFixChromium = GetDlgItem(hTabPage3, IDC_CHECK_FIX_CHROMIUM);
     createToolTip(checkFixChromium, IDS_STRING_FIX_CHROMIUM);
 
+    //application UI language
+    comboBoxAppLanguage = GetDlgItem(hTabPage3, IDC_COMBO_APP_LANGUAGE);
+    SendMessage(comboBoxAppLanguage, CB_ADDSTRING, 0, (LPARAM)_T("Tiếng Việt"));
+    SendMessage(comboBoxAppLanguage, CB_ADDSTRING, 1, (LPARAM)_T("English"));
+    SendMessage(comboBoxAppLanguage, CB_ADDSTRING, 2, (LPARAM)_T("Deutsch"));
+    locSetSkipWindow(comboBoxAppLanguage); //always show self-named languages
+
     /*------------end tab 3----------------*/
 
     SendDlgItemMessage(hDlg, IDBUTTON_OK, BM_SETIMAGE, IMAGE_ICON, (LPARAM)LoadIcon(hIns, MAKEINTRESOURCEW(IDI_ICON_OK_BUTTON)));
     SendDlgItemMessage(hDlg, ID_BTN_DEFAULT, BM_SETIMAGE, IMAGE_ICON, (LPARAM)LoadIcon(hIns, MAKEINTRESOURCEW(IDI_ICON_DEFAULT_BUTTON)));
     SendDlgItemMessage(hDlg, IDBUTTON_EXIT, BM_SETIMAGE, IMAGE_ICON, (LPARAM)LoadIcon(hIns, MAKEINTRESOURCEW(IDI_ICON_EXIT_BUTTON)));
     fillData();
+    locApplyToWindow(hDlg);
 }
 
 INT_PTR MainControlDialog::eventProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -227,7 +235,7 @@ INT_PTR MainControlDialog::eventProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         case ID_BTN_DEFAULT: {
             int msgboxID = MessageBox(
                 hDlg,
-                _T("Bạn có chắc chắn muốn thiết lập lại cài đặt gốc?"),
+                locTr(_T("Bạn có chắc chắn muốn thiết lập lại cài đặt gốc?")),
                 _T("OpenKey"),
                 MB_ICONEXCLAMATION | MB_YESNO
             );
@@ -327,8 +335,28 @@ INT_PTR MainControlDialog::tabPageEventProc(HWND hDlg, UINT uMsg, WPARAM wParam,
 }
 
 void MainControlDialog::fillData() {
+    //title (re-applied so it follows UI language switches)
+    TCHAR title[256];
+    TCHAR titleBuffer[256];
+    LoadString(GetModuleHandle(NULL), IDS_MAIN_DIALOG_TITLE, title, 256);
+    wsprintfW(titleBuffer, locTr(title), OpenKeyHelper::getVersionString().c_str());
+    SetWindowText(hDlg, titleBuffer);
+
+    //tab labels (re-applied so they follow UI language switches)
+    TCITEM tci = { 0 };
+    tci.mask = TCIF_TEXT;
+    tci.pszText = (LPWSTR)locTr(_T("Bộ gõ"));
+    TabCtrl_SetItem(hTab, 0, &tci);
+    tci.pszText = (LPWSTR)locTr(_T("Gõ tắt"));
+    TabCtrl_SetItem(hTab, 1, &tci);
+    tci.pszText = (LPWSTR)locTr(_T("Hệ thống"));
+    TabCtrl_SetItem(hTab, 2, &tci);
+    tci.pszText = (LPWSTR)locTr(_T("Thông tin"));
+    TabCtrl_SetItem(hTab, 3, &tci);
+
     SendMessage(comboBoxInputType, CB_SETCURSEL, vInputType, 0);
     SendMessage(comboBoxTableCode, CB_SETCURSEL, vCodeTable, 0);
+    SendMessage(comboBoxAppLanguage, CB_SETCURSEL, vAppLanguage, 0);
 
     SendMessage(checkCtrl, BM_SETCHECK, HAS_CONTROL(vSwitchKeyStatus) ? 1 : 0, 0);
     SendMessage(checkAlt, BM_SETCHECK, HAS_OPTION(vSwitchKeyStatus) ? 1 : 0, 0);
@@ -378,7 +406,7 @@ void MainControlDialog::fillData() {
 
     //tab info
     wchar_t buffer[256];
-    wsprintfW(buffer, _T("Phiên bản %s cho Windows - Ngày cập nhật: %s"), OpenKeyHelper::getVersionString().c_str(), _T(__DATE__));
+    wsprintfW(buffer, locTr(_T("Phiên bản %s cho Windows - Ngày cập nhật: %s")), OpenKeyHelper::getVersionString().c_str(), _T(__DATE__));
     SendDlgItemMessage(hTabPage4, IDC_STATIC_APP_VERSION_INFO, WM_SETTEXT, 0, LPARAM(buffer));
 }
 
@@ -421,6 +449,10 @@ void MainControlDialog::setSwitchKey(const unsigned short& code) {
 void MainControlDialog::onComboBoxSelected(const HWND& hCombobox, const int& comboboxId) {
     if (hCombobox == comboBoxInputType) {
         APP_SET_DATA(vInputType, (int)SendMessage(hCombobox, CB_GETCURSEL, 0, 0));
+    }
+    else if (hCombobox == comboBoxAppLanguage) {
+        APP_SET_DATA(vAppLanguage, (int)SendMessage(hCombobox, CB_GETCURSEL, 0, 0));
+        AppDelegate::getInstance()->onAppLanguageChanged();
     }
     else if (hCombobox == comboBoxTableCode) {
         APP_SET_DATA(vCodeTable, (int)SendMessage(hCombobox, CB_GETCURSEL, 0, 0));
@@ -654,7 +686,7 @@ void MainControlDialog::onUpdateButton() {
     if (OpenKeyManager::checkUpdate(newVersion)) {
         WCHAR msg[256];
         wsprintf(msg,
-            TEXT("OpenKey Có phiên bản mới (%s), bạn có muốn cập nhật không?"),
+            locTr(_T("OpenKey Có phiên bản mới (%s), bạn có muốn cập nhật không?")),
             utf8ToWideString(newVersion).c_str());
 
         int msgboxID = MessageBox(
@@ -675,7 +707,7 @@ void MainControlDialog::onUpdateButton() {
 
     }
     else {
-        MessageBox(hDlg, _T("Bạn đang dùng phiên bản mới nhất!"), _T("OpenKey Update"), MB_OK);
+        MessageBox(hDlg, locTr(_T("Bạn đang dùng phiên bản mới nhất!")), _T("OpenKey Update"), MB_OK);
     }
     EnableWindow(hUpdateButton, true);
 }
@@ -685,7 +717,7 @@ void MainControlDialog::requestRestartAsAdmin() {
     if (vRunAsAdmin && !IsUserAnAdmin()) {
         int msgboxID = MessageBox(
             hDlg,
-            _T("Bạn cần phải khởi động lại OpenKey để kích hoạt chế độ Admin!\nBạn có muốn khởi động lại OpenKey không?"),
+            locTr(_T("Bạn cần phải khởi động lại OpenKey để kích hoạt chế độ Admin!\nBạn có muốn khởi động lại OpenKey không?")),
             _T("OpenKey"),
             MB_ICONEXCLAMATION | MB_YESNO
         );

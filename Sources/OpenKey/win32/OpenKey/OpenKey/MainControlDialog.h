@@ -19,6 +19,7 @@ private:
 	HWND hTab, hTabPage1, hTabPage2, hTabPage3, hTabPage4;
 	HWND comboBoxInputType;
 	HWND comboBoxTableCode;
+	HWND comboBoxAppLanguage;
 	HWND checkCtrl, checkAlt, checkWin, checkShift, textSwitchKey, checkBeep;
 	HWND checkVietnamese, checkEnglish, checkGerman;
 	HWND checkModernOrthorgraphy, checkFixRecommendBrowser, checkShowOnStartup, checkRunWithWindows,

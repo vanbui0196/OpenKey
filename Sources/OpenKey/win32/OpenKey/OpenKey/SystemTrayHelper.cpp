@@ -48,7 +48,7 @@ redistribute your new version, it MUST be open source.
 #define MODIFY_MENU(MENU, COMMAND, DATA) ModifyMenu(MENU, COMMAND, \
 											MF_BYCOMMAND | (DATA ? MF_CHECKED : MF_UNCHECKED), \
 											COMMAND, \
-											menuData[COMMAND]);
+											locTr(menuData[COMMAND]));
 
 static HMENU popupMenu;
 //static HMENU menuInputType;
@@ -218,65 +218,74 @@ HWND SystemTrayHelper::createFakeWindow(const HINSTANCE & hIns) {
 
 void SystemTrayHelper::createPopupMenu() {
 	popupMenu = CreatePopupMenu();
-	AppendMenu(popupMenu, MF_CHECKED, POPUP_VIET_ON_OFF, menuData[POPUP_VIET_ON_OFF]);
+	AppendMenu(popupMenu, MF_CHECKED, POPUP_VIET_ON_OFF, locTr(menuData[POPUP_VIET_ON_OFF]));
 
 	languageMenu = CreatePopupMenu();
-	AppendMenu(languageMenu, MF_CHECKED, POPUP_LANG_VIET, menuData[POPUP_LANG_VIET]);
-	AppendMenu(languageMenu, MF_CHECKED, POPUP_LANG_ENG, menuData[POPUP_LANG_ENG]);
-	AppendMenu(languageMenu, MF_CHECKED, POPUP_LANG_GER, menuData[POPUP_LANG_GER]);
-	AppendMenu(popupMenu, MF_POPUP, (UINT_PTR)languageMenu, _T("Ngôn ngữ"));
+	AppendMenu(languageMenu, MF_CHECKED, POPUP_LANG_VIET, locTr(menuData[POPUP_LANG_VIET]));
+	AppendMenu(languageMenu, MF_CHECKED, POPUP_LANG_ENG, locTr(menuData[POPUP_LANG_ENG]));
+	AppendMenu(languageMenu, MF_CHECKED, POPUP_LANG_GER, locTr(menuData[POPUP_LANG_GER]));
+	AppendMenu(popupMenu, MF_POPUP, (UINT_PTR)languageMenu, locTr(_T("Ngôn ngữ")));
 
 	AppendMenu(popupMenu, MF_SEPARATOR, 0, 0);
-	AppendMenu(popupMenu, MF_CHECKED, POPUP_SPELLING, menuData[POPUP_SPELLING]);
-	AppendMenu(popupMenu, MF_CHECKED, POPUP_SMART_SWITCH, menuData[POPUP_SMART_SWITCH]);
-	AppendMenu(popupMenu, MF_CHECKED, POPUP_USE_MACRO, menuData[POPUP_USE_MACRO]);
+	AppendMenu(popupMenu, MF_CHECKED, POPUP_SPELLING, locTr(menuData[POPUP_SPELLING]));
+	AppendMenu(popupMenu, MF_CHECKED, POPUP_SMART_SWITCH, locTr(menuData[POPUP_SMART_SWITCH]));
+	AppendMenu(popupMenu, MF_CHECKED, POPUP_USE_MACRO, locTr(menuData[POPUP_USE_MACRO]));
 	AppendMenu(popupMenu, MF_SEPARATOR, 0, 0);
-	AppendMenu(popupMenu, MF_UNCHECKED, POPUP_MACRO_TABLE, menuData[POPUP_MACRO_TABLE]);
-	AppendMenu(popupMenu, MF_UNCHECKED, POPUP_CONVERT_TOOL, menuData[POPUP_CONVERT_TOOL]);
-	AppendMenu(popupMenu, MF_UNCHECKED, POPUP_QUICK_CONVERT, menuData[POPUP_QUICK_CONVERT]);
+	AppendMenu(popupMenu, MF_UNCHECKED, POPUP_MACRO_TABLE, locTr(menuData[POPUP_MACRO_TABLE]));
+	AppendMenu(popupMenu, MF_UNCHECKED, POPUP_CONVERT_TOOL, locTr(menuData[POPUP_CONVERT_TOOL]));
+	AppendMenu(popupMenu, MF_UNCHECKED, POPUP_QUICK_CONVERT, locTr(menuData[POPUP_QUICK_CONVERT]));
 	AppendMenu(popupMenu, MF_SEPARATOR, 0, 0);
 
 	//menuInputType = CreatePopupMenu();
-	AppendMenu(popupMenu, MF_CHECKED, POPUP_TELEX, menuData[POPUP_TELEX]);
-	AppendMenu(popupMenu, MF_CHECKED, POPUP_VNI, menuData[POPUP_VNI]);
-	AppendMenu(popupMenu, MF_CHECKED, POPUP_SIMPLE_TELEX, menuData[POPUP_SIMPLE_TELEX]);
+	AppendMenu(popupMenu, MF_CHECKED, POPUP_TELEX, locTr(menuData[POPUP_TELEX]));
+	AppendMenu(popupMenu, MF_CHECKED, POPUP_VNI, locTr(menuData[POPUP_VNI]));
+	AppendMenu(popupMenu, MF_CHECKED, POPUP_SIMPLE_TELEX, locTr(menuData[POPUP_SIMPLE_TELEX]));
 
 	//AppendMenu(popupMenu, MF_POPUP, (UINT_PTR)menuInputType, _T("Kiểu gõ"));
 	AppendMenu(popupMenu, MF_SEPARATOR, 0, 0);
 
-	AppendMenu(popupMenu, MF_UNCHECKED, POPUP_UNICODE, menuData[POPUP_UNICODE]);
-	AppendMenu(popupMenu, MF_UNCHECKED, POPUP_TCVN3, menuData[POPUP_TCVN3]);
-	AppendMenu(popupMenu, MF_UNCHECKED, POPUP_VNI_WINDOWS, menuData[POPUP_VNI_WINDOWS]);
+	AppendMenu(popupMenu, MF_UNCHECKED, POPUP_UNICODE, locTr(menuData[POPUP_UNICODE]));
+	AppendMenu(popupMenu, MF_UNCHECKED, POPUP_TCVN3, locTr(menuData[POPUP_TCVN3]));
+	AppendMenu(popupMenu, MF_UNCHECKED, POPUP_VNI_WINDOWS, locTr(menuData[POPUP_VNI_WINDOWS]));
 
 	otherCode = CreatePopupMenu();
-	AppendMenu(otherCode, MF_CHECKED, POPUP_UNICODE_COMPOUND, menuData[POPUP_UNICODE_COMPOUND]);
-	AppendMenu(otherCode, MF_CHECKED, POPUP_VN_LOCALE_1258, menuData[POPUP_VN_LOCALE_1258]);
-	AppendMenu(popupMenu, MF_POPUP, (UINT_PTR)otherCode, _T("Bảng mã khác"));
+	AppendMenu(otherCode, MF_CHECKED, POPUP_UNICODE_COMPOUND, locTr(menuData[POPUP_UNICODE_COMPOUND]));
+	AppendMenu(otherCode, MF_CHECKED, POPUP_VN_LOCALE_1258, locTr(menuData[POPUP_VN_LOCALE_1258]));
+	AppendMenu(popupMenu, MF_POPUP, (UINT_PTR)otherCode, locTr(_T("Bảng mã khác")));
 
 	AppendMenu(popupMenu, MF_SEPARATOR, 0, 0);
 
-	AppendMenu(popupMenu, MF_STRING, POPUP_CONTROL_PANEL, menuData[POPUP_CONTROL_PANEL]);
-	AppendMenu(popupMenu, MF_UNCHECKED, POPUP_ABOUT_OPENKEY, menuData[POPUP_ABOUT_OPENKEY]);
+	AppendMenu(popupMenu, MF_STRING, POPUP_CONTROL_PANEL, locTr(menuData[POPUP_CONTROL_PANEL]));
+	AppendMenu(popupMenu, MF_UNCHECKED, POPUP_ABOUT_OPENKEY, locTr(menuData[POPUP_ABOUT_OPENKEY]));
 	AppendMenu(popupMenu, MF_SEPARATOR, 0, 0);
-	AppendMenu(popupMenu, MF_UNCHECKED, POPUP_OPENKEY_EXIT, menuData[POPUP_OPENKEY_EXIT]);
+	AppendMenu(popupMenu, MF_UNCHECKED, POPUP_OPENKEY_EXIT, locTr(menuData[POPUP_OPENKEY_EXIT]));
 
 	SetMenuDefaultItem(popupMenu, POPUP_CONTROL_PANEL, false);
 }
 
+void SystemTrayHelper::rebuildMenu() {
+	if (popupMenu) {
+		DestroyMenu(popupMenu);
+	}
+	createPopupMenu();
+}
+
 static void loadTrayIcon() {
 	int icon = 0;
+	TCHAR tip[128];
 	if (vLanguage == 1) {
 		icon = vUseGrayIcon ? IDI_ICON_STATUS_VIET_10 : IDI_ICON_STATUS_VIET;
-		LoadString(GetModuleHandle(0), IDS_TRAY_TITLE_2, nid.szTip, 128);
+		LoadString(GetModuleHandle(0), IDS_TRAY_TITLE_2, tip, 128);
 	}
 	else if (vLanguage == 2) {
 		icon = vUseGrayIcon ? IDI_ICON_STATUS_GER_10 : IDI_ICON_STATUS_GER;
-		LoadString(GetModuleHandle(0), IDS_TRAY_TITLE_3, nid.szTip, 128);
+		LoadString(GetModuleHandle(0), IDS_TRAY_TITLE_3, tip, 128);
 	}
 	else {
 		icon = vUseGrayIcon ? IDI_ICON_STATUS_ENG_10 : IDI_ICON_STATUS_ENG;
-		LoadString(GetModuleHandle(0), IDS_TRAY_TITLE, nid.szTip, 128);
+		LoadString(GetModuleHandle(0), IDS_TRAY_TITLE, tip, 128);
 	}
+	lstrcpyn(nid.szTip, locTr(tip), 128);
 	nid.hIcon = LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(icon));
 }
 
@@ -347,7 +356,7 @@ void SystemTrayHelper::updateData() {
 			hotkey += (wchar_t)k;
 	}
 
-	wstring hotKeyString = menuData[POPUP_QUICK_CONVERT];
+	wstring hotKeyString = locTr(menuData[POPUP_QUICK_CONVERT]);
 	if (hasAdd) {
 		hotKeyString += L" - [";
 		hotKeyString += hotkey;

@@ -61,6 +61,10 @@ void BaseDialog::createToolTip(const HWND& control, LPCTSTR toolTipString) {
 
 void BaseDialog::createToolTip(const HWND& control, const UINT& stringResId) {
 	LoadString(hInstance, stringResId, tooltipBuff, 1024);
+	LPCTSTR localized = locTr(tooltipBuff);
+	if (localized != tooltipBuff) {
+		lstrcpyn(tooltipBuff, localized, 1024);
+	}
 	createToolTip(control, tooltipBuff);
 }
 
